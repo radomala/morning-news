@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    environment {
+        // Variables pour Docker Hub
+        DOCKER_IMAGE = "radomala/mon_image" // Remplacez par votre nom d'utilisateur Docker Hub et le nom de l'image souhaitée
+        DOCKER_TAG = "latest" // Vous pouvez utiliser un tag basé sur `GIT_COMMIT` ou `BUILD_NUMBER` pour un tag unique
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' // ID des credentials Docker Hub dans Jenkins
+        NEXT_PUBLIC_API_URL = 'https://api.example.com' // URL de l'API pour la build Next.js
+    }
+
+    stages {
+        stage('----------------------------git Clone--------------------------------') {
+            steps {
+               git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+			dir('frontend'){
+                    		docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}", "--build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} .")
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+			dir('frontend'){
+                    		docker.withRegistry('https://registry.hub.docker.com', "${DOCKER_CREDENTIALS_ID}") {
+                        	def image = docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                        image.push()
+                       }
+                       }
+	   	}
+}
+}
+}
+
