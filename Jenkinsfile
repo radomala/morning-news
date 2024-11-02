@@ -31,8 +31,8 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 script {
-                        sh 'sudo docker compose down' 
-                        sh 'sudo docker compose up -d' 
+                        sh 'docker compose down' 
+                        sh 'docker compose up -d' 
                 }
             }
         }
