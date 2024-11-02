@@ -3,7 +3,7 @@ var router = express.Router();
 
 const fetch = require('node-fetch');
 
-const NEWS_API_KEY = process.env.NEWS_API_KEY;
+const NEWS_API_KEY = process.env.NEW_API_KEY;
 
 router.get('/articles', (req, res) => {
   fetch(`https://newsapi.org/v2/top-headlines?sources=the-verge&apiKey=${NEWS_API_KEY}`)

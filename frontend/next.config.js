@@ -4,6 +4,9 @@ const nextConfig = {
   images: {
     domains: ['cdn.vox-cdn.com'],
   },
+  env: {
+    MONGODB_URI: process.env.MONGODB_URI, // Ajout de la variable d'environnement
+  },
 };
 
 module.exports = nextConfig;

@@ -1,5 +1,0 @@
-services:
-  next-app:
-    image: radomala/mon-app:latest
-    ports:
-      - "3000:3000"
