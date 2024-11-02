@@ -10,11 +10,11 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
-            }
-        }
+        //stage('Clone Repository') {
+        //    steps {
+        //        git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
+        //    }
+        //}
  
         stage('Build Docker Image') {
             steps {
