@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         // Variables pour Docker Hub
-        DOCKER_IMAGE = "radomala/backend" // Remplacez par votre nom d'utilisateur Docker Hub et le nom de l'image souhaitée
-        DOCKER_TAG = "latest" // Utilisez un tag unique basé sur `GIT_COMMIT` ou `BUILD_NUMBER` si nécessaire
+        DOCKER_IMAGE = "backend:latest" // Remplacez par votre nom d'utilisateur Docker Hub et le nom de l'image souhaitée
+        DOCKER_TAG = "radomala/" // Utilisez un tag unique basé sur `GIT_COMMIT` ou `BUILD_NUMBER` si nécessaire
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' // ID des credentials Docker Hub dans Jenkins
     }
 
@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                    // dir('backend') {
-                        docker.build("${DOCKER_IMAGE}:${DOCKER_TAG} .")
+                        docker.build("${DOCKER_TAG}:${DOCKER_IMAGE} .")
                    // }
                 }
             }
