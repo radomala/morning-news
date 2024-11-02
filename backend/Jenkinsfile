@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                    // dir('backend') {
-                        docker.build("${DOCKER_TAG}:${DOCKER_IMAGE} .")
+                        docker.build("${DOCKER_TAG}${DOCKER_IMAGE} .")
                    // }
                 }
             }

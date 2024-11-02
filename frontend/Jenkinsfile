@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                    // dir('frontend') {
-                        docker.build("${DOCKER_TAG}:${DOCKER_IMAGE}", "--build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} .")
+                        docker.build("${DOCKER_TAG}${DOCKER_IMAGE}", "--build-arg NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL} .")
                    // }
                 }
             }
