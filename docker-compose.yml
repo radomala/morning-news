@@ -1,0 +1,10 @@
+services:
+  back:
+    image: radomala/backend:latest
+    ports:
+      - "4000:3000"
+
+  front:
+    image: radomala/frontend:latest
+    ports:
+      - "3000:3000"  
