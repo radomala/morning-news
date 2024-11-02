@@ -6,7 +6,7 @@ pipeline {
         DOCKER_IMAGE = "radomala/frontend" 
         DOCKER_TAG = "latest" 
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
-        NEXT_PUBLIC_API_URL = 'http://localhost:4000' // URL de l'API BACk
+        NEXT_PUBLIC_API_URL = 'http://localhost:4000/articles' // URL de l'API BACk
     }
 
     stages {
