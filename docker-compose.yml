@@ -17,4 +17,4 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: "http://backend:3000/articles"
     depends_on:
-      - backend
+      - backend 
