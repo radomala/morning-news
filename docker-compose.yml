@@ -1,11 +1,20 @@
 services:
-  back:
-    #image: radomala/backend:latest
-    image: backend:latest
+  backend:
+    #image: backend:latest
+    image: radomala/backend:latest
     ports:
       - "3000:3000"
+    env_file:
+      - backend/.env
 
-  front:
-    image: frontend:latest
+  frontend:
+    #image: frontend:latest
+    image: radomala/frontend:latest
     ports:
-      - "3001:3001"  
+      - "3001:3000"
+    env_file:
+      - frontend/.env
+    environment:
+      NEXT_PUBLIC_API_URL: "http://backend:3000/articles"
+    depends_on:
+      - backend

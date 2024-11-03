@@ -23,6 +23,12 @@ const importerArticles = require('./importArticles'); // Importer la fonction
 const app = express();
 
 app.use(cors());
+/*app.use(cors({
+    origin: '*', // URL de votre frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Méthodes autorisées
+    credentials: true, // Si vous envoyez des cookies ou des informations d’authentification
+}));
+*/
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
