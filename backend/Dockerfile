@@ -10,7 +10,7 @@ COPY . .
 RUN npm install
 
 # Expose 4000
-EXPOSE 4000
+EXPOSE 3000
 
 # run the backend
 CMD ["npm", "start"]
