@@ -2,18 +2,12 @@ pipeline {
     agent any
 
     environment {
-        // Variables pour Docker Hub
-        DOCKER_IMAGE = "avengersa/backend" // Remplacez par votre nom d'utilisateur Docker Hub et le nom de l'image souhaitée
-        DOCKER_TAG = "latest" // Utilisez un tag unique basé sur `GIT_COMMIT` ou `BUILD_NUMBER` si nécessaire
-        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' // ID des credentials Docker Hub dans Jenkins
+        DOCKER_IMAGE = "avengersa/backend"
+        DOCKER_TAG = "latest"
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
     }
 
     stages {
-        //stage('Clone Repository') {
-        //    steps {
-        //        git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
-        //    }
-        //}
 
         stage('Build Docker Image') { 
             steps {

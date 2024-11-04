@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+     tools {
+        nodejs "nodejs" 
+    }
+
     environment {
         DOCKER_IMAGE = "avengersa/frontend" 
         DOCKER_TAG = "latest" 
@@ -9,11 +13,6 @@ pipeline {
     }
 
     stages {
-        //stage('Clone Repository') {
-        //    steps {
-        //        git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
-        //    }
-        //}
 
         stage('Install Dependencies') {
             steps {
