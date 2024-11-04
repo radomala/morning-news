@@ -37,4 +37,12 @@ pipeline {
             }
         }
     }
+    post {
+        success {
+            githubNotify context: 'jenkins/build-and-test', status: 'SUCCESS'
+        }
+        failure {
+            githubNotify context: 'jenkins/build-and-test', status: 'FAILURE'
+        }
+    }
 }
