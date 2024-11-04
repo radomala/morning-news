@@ -13,7 +13,7 @@ function Home() {
   const [topArticle, setTopArticle] = useState({});
 
   useEffect(() => {
-    fetch('http://backend:3000/articles')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles`)
       .then(response => response.json())
       .then(data => {
         setTopArticle(data.articles[4]);
