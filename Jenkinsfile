@@ -5,7 +5,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
+                git branch: 'develop', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
             }
         }
 

@@ -1,7 +1,7 @@
 services:
   backend:
     #image: backend:latest
-    image: radomala/backend:latest
+    image: avengersa/backend:latest
     ports:
       - "3000:3000"
     env_file:
@@ -9,7 +9,7 @@ services:
 
   frontend:
     #image: frontend:latest
-    image: radomala/frontend:latest
+    image: avengersa/frontend:latest
     ports:
       - "3001:3000"
     env_file:
