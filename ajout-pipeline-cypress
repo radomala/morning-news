@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                // Installez Node.js et npm si nécessaire
+                script {
+                    // Installez les dépendances, y compris Cypress
+                    sh 'npm install'
+                }
+            }
+        }
+        stage('Run Cypress Tests') {
+            steps {
+                // Assurez-vous que votre application est en cours d'exécution avant de lancer Cypress
+                script {
+                    // Exécutez vos tests Cypress
+                    sh 'npx cypress run --spec "cypress/e2e/connection-compte.cy.js"'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Publier les résultats des tests, par exemple en collectant les rapports
+            junit 'cypress/results/*.xml' // Changez selon le format de sortie que vous utilisez
+            archiveArtifacts artifacts: 'cypress/videos/**/*, cypress/screenshots/**/*', allowEmptyArchive: true
+        }
+    }
+}
