@@ -13,7 +13,7 @@ function TopArticle(props) {
       return;
     }
 
-    fetch(`http://localhost:3000/users/canBookmark/${user.token}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/canBookmark/${user.token}`)
       .then(response => response.json())
       .then(data => {
         if (data.result && data.canBookmark) {

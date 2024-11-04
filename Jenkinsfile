@@ -5,7 +5,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
+                git branch: 'develop', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
             }
         }
 
@@ -13,7 +13,7 @@ pipeline {
             steps {
                 dir('backend') {
                     script {
-                        build job: 'job-morning-news-backend'
+                        build job: 'pipeline-preprod-backend'
                     }
                 }
             }
@@ -22,8 +22,8 @@ pipeline {
         stage('Frontend Pipeline') {
             steps {
                 dir('frontend') {
-                    script {
-                        build job: 'job-morning-news-frontend'
+                    script { 
+                        build job: 'pipeline-preprod-frontend'
                     }
                 }
             }

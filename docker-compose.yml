@@ -1,7 +1,7 @@
 services:
   backend:
     #image: backend:latest
-    image: radomala/backend:latest
+    image: avengersa/backend:latest
     ports:
       - "3000:3000"
     env_file:
@@ -9,12 +9,12 @@ services:
 
   frontend:
     #image: frontend:latest
-    image: radomala/frontend:latest
+    image: avengersa/frontend:latest
     ports:
       - "3001:3000"
     env_file:
       - frontend/.env
     environment:
-      NEXT_PUBLIC_API_URL: "http://backend:3000/articles"
+      NEXT_PUBLIC_API_URL: "http://15.237.118.58:3000"
     depends_on:
-      - backend 
+      - backend  

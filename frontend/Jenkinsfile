@@ -1,26 +1,26 @@
 pipeline {
     agent any
 
+     tools {
+        nodejs "nodejs" 
+    }
+
     environment {
-        DOCKER_IMAGE = "radomala/frontend" 
+        DOCKER_IMAGE = "avengersa/frontend" 
         DOCKER_TAG = "latest" 
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
-        NEXT_PUBLIC_API_URL = 'http://localhost:3000/articles' // URL de l'API BACk
+        NEXT_PUBLIC_API_URL = 'http://15.237.118.58:3000' // URL de l'API BACk
     }
 
     stages {
-        //stage('Clone Repository') {
-        //    steps {
-        //        git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
-        //    }
-        //}
 
+        /*
         stage('Install Dependencies') {
             steps {
                 script {
                     dir('frontend') {
                         sh 'npm install' 
-                    }
+                    } 
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
  
         stage('Build Docker Image') {
             steps {
