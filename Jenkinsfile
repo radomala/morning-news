@@ -22,7 +22,7 @@ pipeline {
         stage('Frontend Pipeline') {
             steps {
                 dir('frontend') {
-                    script {
+                    script { 
                         build job: 'pipeline-preprod-frontend'
                     }
                 }

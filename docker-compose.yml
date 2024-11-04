@@ -18,3 +18,4 @@ services:
       NEXT_PUBLIC_API_URL: "http://15.237.118.58:3000/articles"
     depends_on:
       - backend  
+ 

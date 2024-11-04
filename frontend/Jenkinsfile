@@ -19,7 +19,7 @@ pipeline {
                 script {
                     dir('frontend') {
                         sh 'npm install' 
-                    }
+                    } 
                 }
             }
         }
