@@ -13,7 +13,7 @@ pipeline {
             steps {
                 dir('backend') {
                     script {
-                        build job: 'job-morning-news-backend'
+                        build job: 'pipeline-preprod-backend'
                     }
                 }
             }
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     script {
-                        build job: 'job-morning-news-frontend'
+                        build job: 'pipeline-preprod-frontend'
                     }
                 }
             }
