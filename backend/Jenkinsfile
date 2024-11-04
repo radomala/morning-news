@@ -8,15 +8,7 @@ pipeline {
     }
 
     stages {
-
-        stage('backend') {
-            steps {
-                echo 'Début du stage Frontend'
-                // Ajoutez ici d'autres étapes pour le frontend si nécessaire
-                echo 'Fin du stage Frontend'
-            }
-        }
-        /*
+     
         stage('Build Docker Image') { 
             steps {
                 script {
@@ -39,6 +31,5 @@ pipeline {
                 }
             }
         }
-        */
     }
 }
