@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Remplacez 'paire_cle_aws' par l'ID réel de votre clé dans les Credentials Jenkins
-        SSH_KEY = credentials('paire_cle_aws')
+        SSH_KEY = credentials('ubuntu')
     }
 
     stages {
