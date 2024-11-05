@@ -47,37 +47,40 @@ pipeline {
         stage('Deploy backend') {
             steps {
                 script {
-                    def remoteHost = 'ubuntu@35.180.122.171'
-
-                    // Créer un fichier temporaire pour stocker la clé privée
+                    def remoteHostBackend = 'ubuntu@35.180.122.171'
                     writeFile file: 'temp_key.pem', text: SSH_KEY
                     sh 'chmod 600 temp_key.pem'
                     
-                    // Utiliser le fichier temporaire pour se connecter via SSH et déployer le backend
+                    // Commande pour déployer le backend
                     sh """
-                    ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHost} \\
-                        'docker run -d --name backend -p 3000:3000 --env-file /chemin/vers/backend/.env avengersa/backend:latest'
+                    ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHostBackend} << 'EOF'
+                        docker pull avengersa/backend:latest
+                        docker run -d --name backend -p 3000:3000 --env-file /chemin/vers/backend/.env avengersa/backend:latest
+                    EOF
                     """
-                    
-                    // Supprimer la clé temporaire après usage pour la sécurité
-                    sh 'rm temp_key.pem'
                 }
             }
         }
-
+        
         stage('Deploy frontend') {
             steps {
                 script {
-                    def remoteHost = 'ubuntu@35.180.209.72'
-
-                    // Utiliser la même clé pour se connecter au serveur frontend
+                    def remoteHostFrontend = 'ubuntu@35.180.209.72'
+                    writeFile file: 'temp_key.pem', text: SSH_KEY // Écrire le fichier de clé SSH
+                    sh 'chmod 600 temp_key.pem'
+                    
+                    // Commande pour déployer le frontend
                     sh """
-                    ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHost} \\
-                        'docker run -d --name frontend -p 3001:3000 --env-file /chemin/vers/frontend/.env -e NEXT_PUBLIC_API_URL=http://15.237.137.195:3000 avengersa/frontend:latest'
+                    ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHostFrontend} << 'EOF'
+                        docker pull avengersa/frontend:latest
+                        docker run -d --name frontend -p 3001:3000 --env-file /chemin/vers/frontend/.env -e NEXT_PUBLIC_API_URL=http://15.237.137.195:3000 avengersa/frontend:latest
+                    EOF
                     """
                 }
             }
         }
+
+        
     }
 
     post {
