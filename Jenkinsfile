@@ -48,7 +48,7 @@ pipeline {
             steps {
                 script {
                     // Utiliser les identifiants pour SSH
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ibentu', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'USERNAME')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ubentu', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'USERNAME')]) {
                         // Changer les permissions de la clé
                         sh "chmod 600 ${SSH_KEY_FILE}"
                         
@@ -66,7 +66,7 @@ pipeline {
             steps {
                 script {
                     // Utiliser les identifiants pour SSH
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ibentu', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'USERNAME')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ubentu', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'USERNAME')]) {
                         // Changer les permissions de la clé
                         sh "chmod 600 ${SSH_KEY_FILE}"
                         
