@@ -48,14 +48,16 @@ pipeline {
             steps {
                 script {
                     def remoteHostBackend = 'ubuntu@35.180.122.171'
-                    writeFile file: 'temp_key.pem', text: SSH_KEY
-                    sh 'chmod 600 temp_key.pem'
                     
-                    // Commande pour déployer le backend
+                    // Écrire la clé dans un fichier temporaire
+                    writeFile file: 'temp_key.pem', text: SSH_KEY
+                    sh 'chmod 600 temp_key.pem' // Mettre les permissions de la clé
+
+                    // Déployer le backend
                     sh """
                     ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHostBackend} << 'EOF'
                         docker pull avengersa/backend:latest
-                        docker run -d --name backend -p 3000:3000 --env-file /chemin/vers/backend/.env avengersa/backend:latest
+                        docker run -d --name backend -p 3000:3000 --env-file backend/.env avengersa/backend:latest
                     EOF
                     """
                 }
@@ -66,14 +68,16 @@ pipeline {
             steps {
                 script {
                     def remoteHostFrontend = 'ubuntu@35.180.209.72'
-                    writeFile file: 'temp_key.pem', text: SSH_KEY // Écrire le fichier de clé SSH
-                    sh 'chmod 600 temp_key.pem'
                     
-                    // Commande pour déployer le frontend
+                    // Écrire à nouveau la clé dans un fichier temporaire
+                    writeFile file: 'temp_key.pem', text: SSH_KEY
+                    sh 'chmod 600 temp_key.pem' // Mettre les permissions de la clé
+
+                    // Déployer le frontend
                     sh """
                     ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHostFrontend} << 'EOF'
                         docker pull avengersa/frontend:latest
-                        docker run -d --name frontend -p 3001:3000 --env-file /chemin/vers/frontend/.env -e NEXT_PUBLIC_API_URL=http://15.237.137.195:3000 avengersa/frontend:latest
+                        docker run -d --name frontend -p 3001:3000 --env-file frontend/.env -e NEXT_PUBLIC_API_URL=http://15.237.137.195:3000 avengersa/frontend:latest
                     EOF
                     """
                 }
