@@ -46,11 +46,9 @@ pipeline {
         stage('Deploy Backend') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ubuntu', keyFileVariable: 'temp_key.pem', usernameVariable: 'SSH_USER')]) {
-                        // Créer un fichier temporaire pour la clé SSH
-                        sh 'echo "${temp_key.pem}" > temp_key.pem'
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'temp_key.pem', usernameVariable: 'SSH_USER')]) {
                         sh 'chmod 600 temp_key.pem' // Assurez-vous que les permissions sont correctes
-                        sh "ssh -i temp_key.pem -o StrictHostKeyChecking=no ${SSH_USER}@35.180.122.171 'your_command_here'"
+                        sh "ssh -i temp_key.pem -o StrictHostKeyChecking=no ${SSH_USER}@35.180.122.171"
                     }
                 }
             }
@@ -59,10 +57,9 @@ pipeline {
         stage('Deploy Frontend') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ubuntu', keyFileVariable: 'temp_key.pem', usernameVariable: 'SSH_USER')]) {
-                        sh 'echo "${temp_key.pem}" > temp_key.pem'
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'temp_key.pem', usernameVariable: 'SSH_USER')]) {
                         sh 'chmod 600 temp_key.pem' // Assurez-vous que les permissions sont correctes
-                        sh "ssh -i temp_key.pem -o StrictHostKeyChecking=no ${SSH_USER}@35.180.122.171 'your_frontend_command_here'"
+                        sh "ssh -i temp_key.pem -o StrictHostKeyChecking=no ${SSH_USER}@35.180.209.72 "
                     }
                 }
             }
