@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        // Remplacez 'paire_cle_aws' par l'ID réel de votre clé dans les Credentials Jenkins
+        SSH_KEY = credentials('paire_cle_aws')
+    }
+
     stages {
 
   /*      stage('Clone Repository') {
@@ -43,15 +48,19 @@ pipeline {
             steps {
                 script {
                     def remoteHost = 'ubuntu@35.180.122.171'
-                    def sshKey = '/home/rado/paire_cle_aws.pem'
-                    def backendCommand = '''
-                    docker run -d --name backend \
-                      -p 3000:3000 \
-                      --env-file /chemin/vers/backend/.env \
-                      avengersa/backend:latest
-                    '''
-                    // Exécution de la commande Docker sur le serveur distant
-                    sh "ssh -i ${sshKey} -o StrictHostKeyChecking=no ${remoteHost} '${backendCommand}'"
+
+                    // Créer un fichier temporaire pour stocker la clé privée
+                    writeFile file: 'temp_key.pem', text: SSH_KEY
+                    sh 'chmod 600 temp_key.pem'
+                    
+                    // Utiliser le fichier temporaire pour se connecter via SSH et déployer le backend
+                    sh """
+                    ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHost} \\
+                        'docker run -d --name backend -p 3000:3000 --env-file /chemin/vers/backend/.env avengersa/backend:latest'
+                    """
+                    
+                    // Supprimer la clé temporaire après usage pour la sécurité
+                    sh 'rm temp_key.pem'
                 }
             }
         }
@@ -60,20 +69,21 @@ pipeline {
             steps {
                 script {
                     def remoteHost = 'ubuntu@35.180.209.72'
-                    def sshKey = '/home/rado/paire_cle_aws.pem'
-                    def frontendCommand = '''
-                    docker run -d --name frontend \
-                      -p 3001:3000 \
-                      --env-file /chemin/vers/frontend/.env \
-                      -e NEXT_PUBLIC_API_URL="http://15.237.137.195:3000" \
-                      --link backend \
-                      avengersa/frontend:latest
-                    '''
-                    // Exécution de la commande Docker sur le serveur distant
-                    sh "ssh -i ${sshKey} -o StrictHostKeyChecking=no ${remoteHost} '${frontendCommand}'"
+
+                    // Utiliser la même clé pour se connecter au serveur frontend
+                    sh """
+                    ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHost} \\
+                        'docker run -d --name frontend -p 3001:3000 --env-file /chemin/vers/frontend/.env -e NEXT_PUBLIC_API_URL=http://15.237.137.195:3000 avengersa/frontend:latest'
+                    """
                 }
             }
         }
-    
+    }
+
+    post {
+        always {
+            // Assurez-vous que le fichier temporaire est supprimé après l'exécution
+            sh 'rm -f temp_key.pem'
+        }
     }
 }
