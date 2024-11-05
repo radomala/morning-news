@@ -43,23 +43,29 @@ pipeline {
         }
 
         */
-        stage('Deploy Backend') {
-            steps {
+        stage('Deploy backend') {
+        steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'temp_key.pem', usernameVariable: 'SSH_USER')]) {
-                        sh 'chmod 600 temp_key.pem' // Assurez-vous que les permissions sont correctes
-                        sh "ssh -i temp_key.pem -o StrictHostKeyChecking=no ${SSH_USER}@35.180.122.171"
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
+                        // Vérifiez que le fichier de clé existe
+                        sh "echo 'Using SSH key file: \$SSH_KEY_FILE'"
+                        sh "ls -l \$SSH_KEY_FILE" // Vérifiez les permissions
+
+                        // Donnez les permissions à la clé
+                        sh "chmod 600 \$SSH_KEY_FILE"
+                        
+                        // Exemple de commande SSH pour déployer votre backend
+                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@35.180.122.171"
                     }
                 }
             }
         }
-
         stage('Deploy Frontend') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'temp_key.pem', usernameVariable: 'SSH_USER')]) {
-                        sh 'chmod 600 temp_key.pem' // Assurez-vous que les permissions sont correctes
-                        sh "ssh -i temp_key.pem -o StrictHostKeyChecking=no ${SSH_USER}@35.180.209.72 "
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
+                        // Exemple de commande SSH pour déployer votre frontend
+                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@35.180.209.72"
                     }
                 }
             }
