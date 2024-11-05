@@ -47,15 +47,10 @@ pipeline {
         steps {
                 script {
                     withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
-                        // Vérifiez que le fichier de clé existe
                         sh "echo 'Using SSH key file: \$SSH_KEY_FILE'"
-                        sh "ls -l \$SSH_KEY_FILE" // Vérifiez les permissions
-
-                        // Donnez les permissions à la clé
+                        sh "ls -l \$SSH_KEY_FILE"
                         sh "chmod 600 \$SSH_KEY_FILE"
-                        
-                        // Exemple de commande SSH pour déployer votre backend
-                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@35.180.122.171"
+                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@35.180.122.171 'docker run -d --name backend -p 3000:3000 avengersa/backend:latest'"
                     }
                 }
             }
@@ -65,7 +60,7 @@ pipeline {
                 script {
                     withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
                         // Exemple de commande SSH pour déployer votre frontend
-                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@35.180.209.72"
+                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@35.180.209.72 'docker run -d --name backend -p 3000:3000 avengersa/frontend:latest'"
                     }
                 }
             }
@@ -74,7 +69,6 @@ pipeline {
 
     post {
         always {
-            // Assurez-vous que le fichier temporaire est supprimé après l'exécution
             sh 'rm -f temp_key.pem'
         }
     }
