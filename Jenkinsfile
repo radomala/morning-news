@@ -44,47 +44,41 @@ pipeline {
 
         */
 
-        stage('Deploy backend') {
+       stage('Deploy Backend') {
             steps {
                 script {
-                    def remoteHostBackend = 'ubuntu@35.180.122.171'
-                    
-                    // Écrire la clé dans un fichier temporaire
-                    writeFile file: 'temp_key.pem', text: SSH_KEY
-                    sh 'chmod 600 temp_key.pem' // Mettre les permissions de la clé
-
-                    // Déployer le backend
-                    sh """
-                    ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHostBackend} << 'EOF'
-                        docker pull avengersa/backend:latest
-                        docker run -d --name backend -p 3000:3000 --env-file backend/.env avengersa/backend:latest
-                    EOF
-                    """
-                }
-            }
-        }
-        
-        stage('Deploy frontend') {
-            steps {
-                script {
-                    def remoteHostFrontend = 'ubuntu@35.180.209.72'
-                    
-                    // Écrire à nouveau la clé dans un fichier temporaire
-                    writeFile file: 'temp_key.pem', text: SSH_KEY
-                    sh 'chmod 600 temp_key.pem' // Mettre les permissions de la clé
-
-                    // Déployer le frontend
-                    sh """
-                    ssh -i temp_key.pem -o StrictHostKeyChecking=no ${remoteHostFrontend} << 'EOF'
-                        docker pull avengersa/frontend:latest
-                        docker run -d --name frontend -p 3001:3000 --env-file frontend/.env -e NEXT_PUBLIC_API_URL=http://15.237.137.195:3000 avengersa/frontend:latest
-                    EOF
-                    """
+                    // Utiliser les identifiants pour SSH
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ibentu', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'USERNAME')]) {
+                        // Changer les permissions de la clé
+                        sh "chmod 600 ${SSH_KEY_FILE}"
+                        
+                        // Commande pour déployer le backend
+                        sh """
+                        ssh -i ${SSH_KEY_FILE} -o StrictHostKeyChecking=no ubuntu@35.180.122.171 '
+                        docker run -d --name backend -p 3000:3000 --env-file /chemin/vers/backend/.env avengersa/backend:latest
+                        '"""
+                    }
                 }
             }
         }
 
-        
+        stage('Deploy Frontend') {
+            steps {
+                script {
+                    // Utiliser les identifiants pour SSH
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ibentu', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'USERNAME')]) {
+                        // Changer les permissions de la clé
+                        sh "chmod 600 ${SSH_KEY_FILE}"
+                        
+                        // Commande pour déployer le frontend
+                        sh """
+                        ssh -i ${SSH_KEY_FILE} -o StrictHostKeyChecking=no ubuntu@35.180.122.171 '
+                        docker run -d --name frontend -p 80:80 avengersa/frontend:latest
+                        '"""
+                    }
+                }
+            }
+        }
     }
 
     post {
