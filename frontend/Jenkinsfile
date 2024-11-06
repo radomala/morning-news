@@ -36,12 +36,23 @@ pipeline {
             }
         }*/
 
+        stage('Install Cypress Binary') {
+            steps {
+                script {
+                    dir('frontend') {
+                        // Installer Cypress, si ce n'est pas déjà fait
+                        sh 'npx cypress install'
+                    }
+                }
+            }
+        }
+
         stage('Run Cypress Tests') {
             steps {
                 script {
                     docker.image('cypress/included:9.7.0').inside('-u root') {
                         dir('frontend') {
-                           // sh 'npm install'
+                            // Exécution des tests Cypress
                             sh 'npx cypress run'
                         }
                     }
