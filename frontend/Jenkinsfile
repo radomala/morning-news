@@ -41,7 +41,7 @@ pipeline {
                 script {
                     docker.image('cypress/included:9.7.0').inside('-u root') {
                         dir('frontend') {
-                            sh 'npm install'
+                           // sh 'npm install'
                             sh 'npx cypress run'
                         }
                     }
