@@ -30,11 +30,11 @@ pipeline {
             }
         }
 
-        stage('Run Cypress Tests') {
+         stage('Run Cypress Tests') {
             steps {
                 script {
-                    // Utilisation d'un volume pour persister le cache Cypress
-                    docker.image('cypress/included:9.7.0').inside('--entrypoint="" -u root -v /root/.cache/Cypress:/root/.cache/Cypress') {
+                    // Utiliser un utilisateur non-root dans le container Docker pour éviter les problèmes de permissions
+                    docker.image('cypress/included:9.7.0').inside('--entrypoint="" -u 1000:1000') {
                         dir('frontend') {
                             sh 'npx cypress install'  // Installer les binaires Cypress si nécessaire
                             sh 'npx cypress run'      // Lancer les tests Cypress
