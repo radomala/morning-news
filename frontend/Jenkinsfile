@@ -24,18 +24,7 @@ pipeline {
             steps {
                 script {
                     dir('frontend') {
-                        sh 'npm install' 
-                    } 
-                }
-            }
-        }
-
-        stage('Install Cypress Binary') {
-            steps {
-                script {
-                    dir('frontend') {
-                        // Installer Cypress et le binaire
-                        sh 'npx cypress install'
+                        sh 'npm install'
                     }
                 }
             }
@@ -44,16 +33,17 @@ pipeline {
         stage('Run Cypress Tests') {
             steps {
                 script {
-                    // Utiliser --entrypoint='' pour ignorer l'entrypoint par défaut
-                    docker.image('cypress/included:9.7.0').inside('--entrypoint="" -u root') {
+                    // Utilisation d'un volume pour persister le cache Cypress
+                    docker.image('cypress/included:9.7.0').inside('--entrypoint="" -u root -v /root/.cache/Cypress:/root/.cache/Cypress') {
                         dir('frontend') {
-                            // Exécution des tests Cypress
-                            sh 'npx cypress run'
+                            sh 'npx cypress install'  // Installer les binaires Cypress si nécessaire
+                            sh 'npx cypress run'      // Lancer les tests Cypress
                         }
                     }
                 }
             }
         }
+
         /*
         stage('Run Jest Tests') {
             steps {
