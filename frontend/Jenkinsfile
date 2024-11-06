@@ -40,16 +40,24 @@ pipeline {
             agent {
                 // Utiliser l'image Docker officielle de Cypress
                 docker {
-                    image 'cypress/included:10.8.0' // Utilisez la version de Cypress appropriée
-                    //args '-u root' // Exécuter en tant que root si nécessaire
+                    image 'cypress/included:9.7.0' // Utilisez la version de Cypress appropriée
+                    args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress'
                 }
             }
             steps {
                dir('frontend') {
                     // Installer les dépendances et exécuter les tests Cypress
-                    sh 'npm install'
                     sh 'npx cypress run'
                 }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'cypress/screenshots/ ** , cypress/videos/ ** ', allowEmptyArchive: true
+                }
+                failure {
+                    echo 'Cypress tests failed.'
+                }
+            
             }
         }
 
@@ -79,4 +87,5 @@ pipeline {
         }
         */
     }
+
 }
