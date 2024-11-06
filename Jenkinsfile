@@ -41,7 +41,7 @@ pipeline {
                         sh "echo 'Using SSH key file: \$SSH_KEY_FILE'"
                         sh "ls -l \$SSH_KEY_FILE"
                         sh "chmod 600 \$SSH_KEY_FILE"
-                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@15.237.214.217 'sudo docker run -d --name backend -p 3000:3000 avengersa/backend:latest'"
+                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@15.237.214.217 'sudo docker run -d --name backend -p 3000:3000 avengersa/backend:v0'"
                     }
                 }
             }
@@ -51,7 +51,7 @@ pipeline {
                 script {
                     withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
                         // Exemple de commande SSH pour déployer votre frontend
-                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@15.237.130.99 'sudo docker run -d --name backend -p 3001:3000 avengersa/frontend:latest'"
+                        sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no \$SSH_USER@15.237.130.99 'sudo docker run -d --name backend -p 3001:3000 avengersa/frontend:v0'"
                     }
                 }
             }
