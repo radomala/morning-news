@@ -33,6 +33,7 @@ pipeline {
                 }
             }
         }
+        /*
         stage('Deploy with Docker Compose') {
             steps {
                 script {
@@ -41,6 +42,7 @@ pipeline {
                 }
             }
         }
+        */
 
         
         stage('Deploy backend') {
