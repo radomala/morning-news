@@ -4,13 +4,13 @@ pipeline {
     tools {
         nodejs "nodejs" 
     }
-
+    /*
     environment {
         DOCKER_IMAGE = "avengersa/backend"
         DOCKER_TAG = "v0"
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
     }
-
+    */
     stages {
 
         stage('Install Dependencies') {
