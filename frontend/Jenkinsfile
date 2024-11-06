@@ -39,7 +39,7 @@ pipeline {
         stage('Run Cypress Tests') {
             steps {
                 script {
-                    docker.image('cypress/included:10.8.0').inside('-u root') {
+                    docker.image('cypress/included:9.7.0').inside('-u root') {
                         dir('frontend') {
                             sh 'npm install'
                             sh 'npx cypress run'
