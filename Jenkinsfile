@@ -1,10 +1,11 @@
 pipeline {
     agent any
-
+    /*
     environment {
         // Remplacez 'paire_cle_aws' par l'ID réel de votre clé dans les Credentials Jenkins
         SSH_KEY = credentials('ubuntu')
     }
+    */
 
     stages {
 
@@ -14,6 +15,7 @@ pipeline {
             }
         }
 
+        /*
         stage('Backend Pipeline') {
             steps {
                 dir('backend') {
@@ -23,6 +25,7 @@ pipeline {
                 }
             }
         }
+        */
         
         stage('Frontend Pipeline') {
             steps {
@@ -34,6 +37,7 @@ pipeline {
             }
         }
         
+        /*
         stage('Deploy backend') {
         steps {
                 script {
@@ -46,6 +50,7 @@ pipeline {
                 }
             }
         }
+        
         stage('Deploy Frontend') {
             steps {
                 script {
@@ -56,11 +61,13 @@ pipeline {
                 }
             }
         }
+        */
     }
-
+    /*
     post {
         always {
             sh 'rm -f temp_key.pem'
         }
     }
+    */
 }
