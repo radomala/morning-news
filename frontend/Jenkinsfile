@@ -41,7 +41,7 @@ pipeline {
                 // Utiliser l'image Docker officielle de Cypress
                 docker {
                     image 'cypress/included:10.8.0' // Utilisez la version de Cypress appropriée
-                    args '-u root' // Exécuter en tant que root si nécessaire
+                    //args '-u root' // Exécuter en tant que root si nécessaire
                 }
             }
             steps {
