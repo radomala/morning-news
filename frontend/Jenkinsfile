@@ -47,13 +47,14 @@ pipeline {
         
 
         stage('Run Cypress Tests') {
-            agent {
+         /*   agent {
                 // Utiliser l'image Docker officielle de Cypress
                 docker {
                     image 'cypress/included:9.7.0' // Utilisez la version de Cypress appropriée
                     args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress'
                 }
             }
+            */
             steps {
                dir('frontend') {
                     // Installer les dépendances et exécuter les tests Cypress
