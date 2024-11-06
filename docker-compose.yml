@@ -15,6 +15,6 @@ services:
     env_file:
       - frontend/.env
     environment:
-      NEXT_PUBLIC_API_URL: "http://15.237.137.195:3000"
+      NEXT_PUBLIC_API_URL: "http://15.188.147.77:3000"
     depends_on:
       - backend  
