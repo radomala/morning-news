@@ -4,17 +4,18 @@ pipeline {
      tools {
         nodejs "nodejs" 
     }
-
+    /*
     environment {
         DOCKER_IMAGE = "avengersa/frontend" 
         DOCKER_TAG = "v0" 
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
         NEXT_PUBLIC_API_URL = 'http://13.38.70.242:3000' // URL de l'API BACk
     }
+    */
 
     stages {
 
-        /*
+        
         stage('Install Dependencies') {
             steps {
                 script {
@@ -24,7 +25,7 @@ pipeline {
                 }
             }
         }
-
+        /*
         stage('Run Jest Tests') {
             steps {
                 script {
@@ -34,6 +35,25 @@ pipeline {
                 }
             }
         }*/
+
+        stage('Run Cypress Tests') {
+            agent {
+                // Utiliser l'image Docker officielle de Cypress
+                docker {
+                    image 'cypress/included:10.8.0' // Utilisez la version de Cypress appropriée
+                    args '-u root' // Exécuter en tant que root si nécessaire
+                }
+            }
+            steps {
+               dir('frontend') {
+                    // Installer les dépendances et exécuter les tests Cypress
+                    sh 'npm install'
+                    sh 'npx cypress run'
+                }
+            }
+        }
+
+        /*
  
         stage('Build Docker Image') {
             steps {
@@ -57,5 +77,6 @@ pipeline {
                 }
             }
         }
+        */
     }
 }

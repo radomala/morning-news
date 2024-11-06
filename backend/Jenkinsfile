@@ -1,82 +1,14 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs "nodejs" 
-    }
-    /*
     environment {
         DOCKER_IMAGE = "avengersa/backend"
-        DOCKER_TAG = "v0"
+        DOCKER_TAG = "latest"
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
     }
-    */
+
     stages {
 
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    dir('frontend') {
-                        sh 'npm install' 
-                    } 
-                }
-            }
-        }
-        /*
-        stage('Run Jest Tests') {
-            steps {
-                script {
-                    dir('frontend') {
-                        sh 'npm run test -- --watchAll=false'
-                    }
-                }
-            }
-        }
-        */
-
-        stage('Run Cypress Tests') {
-            agent {
-                // Utiliser l'image Docker officielle de Cypress
-                docker {
-                    image 'cypress/included:10.8.0' // Utilisez la version de Cypress appropriée
-                    args '-u root' // Exécuter en tant que root si nécessaire
-                }
-            }
-            steps {
-               dir('frontend') {
-                    // Installer les dépendances et exécuter les tests Cypress
-                    sh 'npm install'
-                    sh 'npx cypress run'
-                }
-            }
-        }
-        /*
-        stage('Run Cypress Tests') {
-            agent {
-                docker {
-                    //image 'cypress/included:9.7.0'
-                    image 'cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1'
-                    args '-V $CYPRESS_CACHE_FOLDER:/cache/Cypress' // Assurez-vous que cette variable est définie
-                }
-            }
-
-            steps {
-                dir('frontend') {
-                    sh 'npx cypress run'
-                }
-            }
-
-            post {
-                always {
-                    archiveArtifacts artifacts: 'frontend/cypress/screenshots/**, frontend/cypress/videos/**', allowEmptyArchive: true
-                }
-                failure {
-                    echo 'Cypress tests failed'
-                }
-            }
-        }
-        */    
-        /*
         stage('Build Docker Image') { 
             steps {
                 script {
@@ -99,6 +31,5 @@ pipeline {
                 }
             }
         }
-        */
     }
 }
