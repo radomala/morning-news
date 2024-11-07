@@ -11,7 +11,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git branch: 'test', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
+                git branch: 'test2', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
             }
         }
 
@@ -31,7 +31,7 @@ pipeline {
             steps {
                 dir('frontend') {
                     script { 
-                        build job: 'pipeline-preprod-frontend'
+                        build job: 'pipeline-preprod-test2'
                     }
                 }
             }
