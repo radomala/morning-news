@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // Remplacez 'paire_cle_aws' par l'ID réel de votre clé dans les Credentials Jenkins
         SSH_KEY = credentials('ubuntu')
     }
 
