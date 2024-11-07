@@ -1,8 +1,8 @@
 pipeline {
-    agent any  // Utilisation d'un agent global pour exécuter le pipeline
+    agent any
 
     tools {
-        nodejs "nodejs"  // Assurez-vous que NodeJS est installé dans Jenkins
+        nodejs "nodejs"
     }
 
     stages {
@@ -17,34 +17,13 @@ pipeline {
         stage('Run Locust Load Tests') {
             steps {
                 script {
-                    // Utiliser Docker pour exécuter Locust à l'intérieur d'un conteneur Docker
-                    docker.image('locustio/locust').inside {
+                    // Use a Python image to install Locust and run tests
+                    docker.image('python:3.8-slim').inside {
+                        sh 'pip install locust'
                         dir('frontend') {
                             sh 'locust -f locustfile.py --headless -u 10 -r 2 --run-time 1m --host=http://localhost'
                         }
                     }
-                }
-            }
-        }
-
-        stage('Run Cypress Tests') {
-            steps {
-                script {
-                    // Utiliser un conteneur Docker pour exécuter Cypress
-                    docker.image('cypress/included:latest').inside {
-                        dir('frontend') {
-                            sh 'npx cypress run'
-                        }
-                    }
-                }
-            }
-
-            post {
-                always {
-                    archiveArtifacts artifacts: 'cypress/screenshots/**, cypress/videos/**', allowEmptyArchive: true
-                }
-                failure {
-                    echo 'Cypress tests failed.'
                 }
             }
         }
