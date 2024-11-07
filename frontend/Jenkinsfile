@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+     agent {
+        docker {
+            image 'cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0' // L'image Docker Cypress
+            args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress' // Arguments supplémentaires si nécessaire
+        }
+    }
 
      tools {
         nodejs "nodejs" 
@@ -20,7 +25,7 @@ pipeline {
 
         
 
-        stage('Install Dependencies') {
+       stage('Install Dependencies') {
             steps {
                 script {
                     dir('frontend') {
@@ -30,6 +35,16 @@ pipeline {
             }
         }
 
+        stage('Run Cypress Tests') {
+            steps {
+                script {
+                    dir('frontend') {
+                        sh 'npx cypress run'
+                    }
+                }
+            }
+        }
+    
 
         /*
         stage('Run Jest Tests') {
@@ -47,32 +62,9 @@ pipeline {
         
 
         
-        stage('Run Cypress Tests') {
-    agent {
-        docker {
-            image 'cypress/included:9.7.0' // Utilisez la version de Cypress appropriée
-            args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress'
-        }
-    }
-    steps {
-        script {
-            // Installer Xvfb avant d'exécuter Cypress
-            sh 'apt-get update && apt-get install -y xvfb'
-            // Exécuter Cypress
-            dir('frontend') {
-                sh 'npx cypress run'
-            }
-        }
-    }
-    post {
-        always {
-            archiveArtifacts artifacts: 'cypress/screenshots/**, cypress/videos/**', allowEmptyArchive: true
-        }
-        failure {
-            echo 'Cypress tests failed.'
-        }
-    }
-}
+     
+    
+
 
         
 
