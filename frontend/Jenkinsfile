@@ -16,6 +16,20 @@ pipeline {
             }
         }
 
+        stage('Run Locust Load Tests') {
+            agent {
+                docker {
+                    image 'locustio/locust'
+	            }
+            }
+
+            steps {
+                script {
+                    dir('frontend') {
+                        sh 'locust -f locustfile.py --headless -u 10 -r 2 -- run-time 1m -- host=http://localhost'
+	        }}}
+        }
+        /*
         stage('Build Docker Image') {
             agent {
                 label 'docker'  // Utilisation d'un label pour spécifier un agent Docker
@@ -36,6 +50,6 @@ pipeline {
                     echo 'Cypress tests failed.'
                 }
             }
-        }
+        } */
     }
 }
