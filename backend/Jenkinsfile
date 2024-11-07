@@ -38,7 +38,7 @@ pipeline {
     agent any
 
     environment {
-        SONAR_TOKEN = credentials('your-sonar-token-id') // ID de vos credentials Jenkins  
+        SONAR_TOKEN = credentials('token-git-jenkins') // ID de vos credentials Jenkins  
         SONAR_HOST_URL = 'https://sonarcloud.io'
         SONAR_ORGANIZATION = 'radomala' // Votre organisation SonarCloud  
         PROJECT_KEY = 'mornings_news_backend' // Clé de votre projet  
