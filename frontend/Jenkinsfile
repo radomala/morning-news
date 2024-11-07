@@ -1,20 +1,12 @@
 pipeline {
+    agent any  // Déclare un agent global pour exécuter le pipeline sur n'importe quel nœud disponible
 
     tools {
-        nodejs "nodejs" 
+        nodejs "nodejs"
     }
-    /*
-    environment {
-        DOCKER_IMAGE = "avengersa/frontend" 
-        DOCKER_TAG = "v0" 
-        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
-        NEXT_PUBLIC_API_URL = 'http://13.38.70.242:3000' // URL de l'API BACk
-    }
-    */
 
     stages {
-
-       stage('Install Dependencies') {
+        stage('Install Dependencies') {
             steps {
                 script {
                     dir('frontend') {
@@ -23,42 +15,30 @@ pipeline {
                 }
             }
         }
-        /*
-        stage('Run Jest Tests') {
-            steps {
-                script {
-                    dir('frontend') {
-                        sh 'npm run test -- --watchAll=false'
-                    }
-                }
-            }
-        }*/        
+
         stage('Build Docker Image') {
-            agent  {
+            agent {
                 docker {
-                   
                     image 'cypress/included:9.7.0'
                     args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress'
-                
                 }
             }
             steps {
                 script {
                     dir('frontend') {
-                       sh 'npx cypress run'
+                        sh 'npx cypress run'
                     }
                 }
             }
 
             post {
                 always {
-                    archiveArtifacts artifacts: 'cypress/screenshots/ ** , cypress/videos/ ** ', allowEmptyArchive: true
+                    archiveArtifacts artifacts: 'cypress/screenshots/**, cypress/videos/**', allowEmptyArchive: true
                 }
                 failure {
                     echo 'Cypress tests failed.'
                 }
             }
-        } 
+        }
     }
-
 }
