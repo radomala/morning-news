@@ -1,12 +1,6 @@
 pipeline {
-     agent {
-        docker {
-            image 'cypress/browsers:node-20.9.0-chrome-118'
-            args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress' // Arguments supplémentaires si nécessaire
-        }
-    }
 
-     tools {
+    tools {
         nodejs "nodejs" 
     }
     /*
@@ -42,10 +36,10 @@ pipeline {
         stage('Build Docker Image') {
             agent  {
                 docker {
-                    dir('frontend') {
-                        image 'cypress/included:9.7.0'
-                        args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress'
-                    }
+                   
+                    image 'cypress/included:9.7.0'
+                    args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress'
+                
                 }
             }
             steps {
