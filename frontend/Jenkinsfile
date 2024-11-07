@@ -2,42 +2,39 @@ pipeline {
     agent any  // Utilisation d'un agent global pour exécuter le pipeline
 
     tools {
-        nodejs "nodejs"
+        nodejs "nodejs"  // Assurez-vous que NodeJS est installé dans Jenkins
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
-                script {
-                    dir('frontend') {
-                        sh 'npm install'
-                    }
+                dir('frontend') {
+                    sh 'npm install'
                 }
             }
         }
 
         stage('Run Locust Load Tests') {
-            agent {
-                docker {
-                    image 'locustio/locust'
-	            }
-            }
-
             steps {
                 script {
-                    dir('frontend') {
-                        sh 'locust -f locustfile.py --headless -u 10 -r 2 -- run-time 1m -- host=http://localhost'
-	        }}}
+                    // Utiliser Docker pour exécuter Locust à l'intérieur d'un conteneur Docker
+                    docker.image('locustio/locust').inside {
+                        dir('frontend') {
+                            sh 'locust -f locustfile.py --headless -u 10 -r 2 --run-time 1m --host=http://localhost'
+                        }
+                    }
+                }
+            }
         }
-        /*
-        stage('Build Docker Image') {
-            agent {
-                label 'docker'  // Utilisation d'un label pour spécifier un agent Docker
-            }
+
+        stage('Run Cypress Tests') {
             steps {
                 script {
-                    dir('frontend') {
-                        sh 'npx cypress run'
+                    // Utiliser un conteneur Docker pour exécuter Cypress
+                    docker.image('cypress/included:latest').inside {
+                        dir('frontend') {
+                            sh 'npx cypress run'
+                        }
                     }
                 }
             }
@@ -50,6 +47,6 @@ pipeline {
                     echo 'Cypress tests failed.'
                 }
             }
-        } */
+        }
     }
 }
