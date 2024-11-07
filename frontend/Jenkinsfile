@@ -1,5 +1,5 @@
 pipeline {
-    agent any  // Déclare un agent global pour exécuter le pipeline sur n'importe quel nœud disponible
+    agent any  // Utilisation d'un agent global pour exécuter le pipeline
 
     tools {
         nodejs "nodejs"
@@ -18,10 +18,7 @@ pipeline {
 
         stage('Build Docker Image') {
             agent {
-                docker {
-                    image 'cypress/included:9.7.0'
-                    args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress'
-                }
+                label 'docker'  // Utilisation d'un label pour spécifier un agent Docker
             }
             steps {
                 script {
