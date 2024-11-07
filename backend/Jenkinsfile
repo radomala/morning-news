@@ -1,4 +1,4 @@
-pipeline {
+/*pipeline {
     agent any
 
     environment {
@@ -7,7 +7,7 @@ pipeline {
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
     }
 
-    stages {
+  /*  stages {
 
         stage('Build Docker Image') { 
             steps {
@@ -28,6 +28,42 @@ pipeline {
                             image.push()
                         }
                     }
+                }
+            }
+        }
+    }
+}
+*/
+pipeline {
+    agent any
+
+    environment {
+        SONAR_TOKEN = credentials('your-sonar-token-id') // ID de vos credentials Jenkins  
+        SONAR_HOST_URL = 'https://sonarcloud.io'
+        SONAR_ORGANIZATION = 'radomala' // Votre organisation SonarCloud  
+        PROJECT_KEY = 'mornings_news_backend' // Clé de votre projet  
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                // Clonez votre dépôt depuis Git  
+                git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/mornings_news.git' // Remplacez par l'URL de votre dépôt  
+            }
+        }
+
+        stage('SonarCloud Analysis') {
+            steps {
+                script {
+                    // Exécution de SonarScanner  
+                    sh """
+                    sonar-scanner \
+                      -Dsonar.organization=${SONAR_ORGANIZATION} \
+                      -Dsonar.projectKey=${PROJECT_KEY} \
+                      -Dsonar.sources=. \
+                      -Dsonar.host.url=${SONAR_HOST_URL} \
+                      -Dsonar.login=${SONAR_TOKEN}
+                    """
                 }
             }
         }
