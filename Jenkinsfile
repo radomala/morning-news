@@ -13,7 +13,7 @@ pipeline {
             }
         }
 
-/*        stage('Backend Pipeline') {
+        stage('Backend Pipeline') {
             steps {
                 dir('backend') {
                     script {
@@ -32,7 +32,7 @@ pipeline {
                 }
             }
         }
-        
+/*       
         stage('Deploy backend') {
         steps {
                 script {
