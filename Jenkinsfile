@@ -9,7 +9,7 @@ pipeline {
 
         stage('Clone Repository') {
             steps {
-                git branch: 'develop', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
+                git branch: 'romeo_news', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
             }
         }
 
