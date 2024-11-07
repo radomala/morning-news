@@ -48,7 +48,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Clonez votre dépôt depuis Git  
-                git branch: 'main', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/mornings_news.git' // Remplacez par l'URL de votre dépôt  
+                git branch: 'romeo_news', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/mornings_news.git' // Remplacez par l'URL de votre dépôt  
             }
         }
 
