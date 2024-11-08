@@ -1,0 +1,46 @@
+  
+   pipeline {
+       agent any
+
+       stages {
+           stage('Checkout') {
+               steps {
+                   // Cloner le dépôt depuis Github ou accéder au dossier local  
+                   // git branch: 'main', url: 'https://github.com/username/repo.git'
+                   sh 'echo "Cloning the repository..."' // Remplacez par la commande pour cloner si nécessaire  
+               }
+           }
+
+           stage('Build') {
+               steps {
+                   // Instructions de construction  
+                   sh 'echo "Building the application..."' // Remplacez par votre commande de build réelle  
+                   // par exemple : sh 'mvn clean package' pour un projet Maven  
+               }
+           }
+
+           stage('Test') {
+               steps {
+                   // Instructions pour exécuter les tests  
+                   sh 'echo "Running tests..."' // Remplacez par votre commande de test réelle  
+                   // par exemple : sh 'mvn test' pour un projet Maven  
+               }
+           }
+
+           stage('Deploy') {
+               steps {
+                   // Instructions pour déployer l'application  
+                   sh 'echo "Deploying the application..."' // Remplacez par votre commande de déploiement réelle  
+               }
+           }
+       }
+
+       post {
+           success {
+               echo 'Pipeline completed successfully!'
+           }
+           failure {
+               echo 'Pipeline failed.'
+           }
+       }
+   }
