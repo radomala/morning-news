@@ -7,9 +7,9 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "avengersa/frontend" 
-        DOCKER_TAG = "v0" 
+        DOCKER_TAG = "v1" 
         DOCKER_CREDENTIALS_ID = 'docker-hub-credentials' 
-        NEXT_PUBLIC_API_URL = 'http://13.37.225.62:3000' // URL de l'API BACk
+        NEXT_PUBLIC_API_URL = 'http://15.237.198.142:3000' // URL de l'API BACk
     }
 
     stages {
