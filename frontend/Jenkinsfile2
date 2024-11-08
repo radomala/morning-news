@@ -6,7 +6,7 @@
            stage('Checkout') {
                steps {
                    // Cloner le dépôt depuis Github ou accéder au dossier local  
-                   // git branch: 'main', url: 'https://github.com/username/repo.git'
+                   // git branch: 'romeo_news', url: 'https://github.com/username/repo.git'
                    sh 'echo "Cloning the repository..."' // Remplacez par la commande pour cloner si nécessaire  
                }
            }
