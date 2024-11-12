@@ -21,10 +21,10 @@
           - gnupg
         state: present
 
-    - name: Installer Java
-      apt:
-        name: openjdk-17-jdk
-        state: present
+    #- name: Installer Java
+    #  apt:
+    #    name: openjdk-17-jdk
+    #    state: present
 
     - name: Mettre à jour le cache des paquets
       apt:

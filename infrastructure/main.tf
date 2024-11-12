@@ -342,7 +342,7 @@ resource "local_file" "ansible_inventory" {
 
 resource "null_resource" "run_ansible" {
   provisioner "local-exec" {
-    command = "sleep 20 && ansible-playbook -i ${path.module}/inventory.yml --private-key ${local.private_key_path} application-playbook.yml"
+    command = "sleep 40 && ansible-playbook -i ${path.module}/inventory.yml --private-key ${local.private_key_path} application-playbook.yml"
   }
 
   depends_on = [aws_instance.server-backend, aws_instance.server-frontend, aws_instance.server-prometheus, aws_instance.server-grafana]
