@@ -1,0 +1,343 @@
+---
+- hosts: backend:frontend
+  become: yes
+  vars:
+    terraform_version: "1.5.0"
+
+  tasks:
+    - name: Mettre à jour le cache APT
+      apt:
+        update_cache: yes
+
+    - name: Installer les dépendances nécessaires
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - wget
+          - tar
+          - gnupg
+        state: present
+
+    #- name: Installer Java
+    #  apt:
+    #    name: openjdk-17-jdk
+    #    state: present
+
+    - name: Mettre à jour le cache des paquets
+      apt:
+        update_cache: yes
+
+
+    - name: Ajouter la clé GPG officielle de Docker
+      shell: |
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker.gpg
+      args:
+        executable: /bin/bash
+
+    - name: Ajouter le dépôt Docker
+      shell: |
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      args:
+        executable: /bin/bash
+
+    - name: Mettre à jour le cache APT après ajout du dépôt Docker
+      apt:
+        update_cache: yes
+
+    - name: Installer Docker
+      apt:
+        name: docker-ce
+        state: present
+
+
+    # Installer Docker Compose
+    - name: Installer Docker Compose
+      shell: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      args:
+        executable: /bin/bash
+
+    - name: Appliquer les permissions pour Docker Compose
+      command: chmod +x /usr/local/bin/docker-compose
+
+    - name: Créer le groupe Docker (s'il n'existe pas déjà)
+      ansible.builtin.group:
+        name: docker
+        state: present
+ 
+    - name: Ajouter l'utilisateur au groupe Docker
+      ansible.builtin.user:
+        name: ubuntu  
+        groups: docker
+        append: yes  
+
+    - name: Vérifier que le service Docker est en cours d'exécution
+      ansible.builtin.service:
+        name: docker
+        state: started
+
+    - name: Ajouter l'utilisateur ubuntu à sudoers avec NOPASSWD
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^ubuntu ALL=.*'
+        line: 'ubuntu ALL=(ALL) NOPASSWD:ALL'
+        validate: 'visudo -cf %s'
+      tags:
+        - sudoers
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+
+    - name: Download Node Exporter
+      shell: wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz -P /tmp/
+    
+    - name: Extract Node Exporter
+      unarchive:
+        src: /tmp/node_exporter-1.5.0.linux-amd64.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Create Node Exporter user
+      user:
+        name: node_exporter
+        shell: /usr/sbin/nologin
+
+    - name: Set ownership on Node Exporter directories
+      file:
+        path: /opt/node_exporter-1.5.0.linux-amd64
+        owner: node_exporter
+        group: node_exporter
+        state: directory
+
+    - name: Create systemd service for Node Exporter
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+
+          [Service]
+          User=node_exporter
+          ExecStart=/opt/node_exporter-1.5.0.linux-amd64/node_exporter
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Node Exporter
+      systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
+
+
+- hosts: prometheus  
+  become: yes  
+  tasks:
+    - name: Ajouter l'utilisateur ubuntu à sudoers avec NOPASSWD
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: '^ubuntu ALL=.*'
+        line: 'ubuntu ALL=(ALL) NOPASSWD:ALL'
+        validate: 'visudo -cf %s'
+      tags:
+        - sudoers
+    - name: Update apt cache
+      apt:
+        update_cache: yes 
+
+    - name: Install dependencies
+      apt:
+        name:
+          - wget  
+          - tar   
+        state: present
+
+    # Installation de Prometheus
+    - name: Download Prometheus
+      shell: wget https://github.com/prometheus/prometheus/releases/download/v2.46.0/prometheus-2.46.0.linux-amd64.tar.gz -P /tmp/
+    
+    - name: Extract Prometheus
+      unarchive:
+        src: /tmp/prometheus-2.46.0.linux-amd64.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Create Prometheus user
+      user:
+        name: prometheus
+        shell: /usr/sbin/nologin
+
+    - name: Create storage directory for Prometheus
+      file:
+        path: /var/lib/prometheus
+        state: directory
+        owner: prometheus
+        group: prometheus
+
+    - name: Set ownership on Prometheus directories
+      file:
+        path: "{{ item }}"
+        owner: prometheus
+        group: prometheus
+        state: directory
+      loop:
+        - /opt/prometheus-2.46.0.linux-amd64
+        - /opt/prometheus-2.46.0.linux-amd64/consoles
+        - /opt/prometheus-2.46.0.linux-amd64/console_libraries
+
+    - name: Create systemd service for Prometheus
+      copy:
+        dest: /etc/systemd/system/prometheus.service
+        content: |
+          [Unit]
+          Description=Prometheus Monitoring
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          User=prometheus
+          ExecStart=/opt/prometheus-2.46.0.linux-amd64/prometheus \
+          --config.file=/opt/prometheus-2.46.0.linux-amd64/prometheus.yml \
+          --storage.tsdb.path=/var/lib/prometheus \
+          --web.console.templates=/opt/prometheus-2.46.0.linux-amd64/consoles \
+          --web.console.libraries=/opt/prometheus-2.46.0.linux-amd64/console_libraries
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Prometheus
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started
+
+    - name: Download Node Exporter
+      shell: wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz -P /tmp/
+    
+    - name: Extract Node Exporter
+      unarchive:
+        src: /tmp/node_exporter-1.5.0.linux-amd64.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Create Node Exporter user
+      user:
+        name: node_exporter
+        shell: /usr/sbin/nologin
+
+    - name: Set ownership on Node Exporter directories
+      file:
+        path: /opt/node_exporter-1.5.0.linux-amd64
+        owner: node_exporter
+        group: node_exporter
+        state: directory
+
+    - name: Create systemd service for Node Exporter
+      copy:
+        dest: /etc/systemd/system/node_exporter.service
+        content: |
+          [Unit]
+          Description=Node Exporter
+
+          [Service]
+          User=node_exporter
+          ExecStart=/opt/node_exporter-1.5.0.linux-amd64/node_exporter
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Node Exporter
+      systemd:
+        name: node_exporter
+        enabled: yes
+        state: started
+
+    - name: Update Prometheus configuration for Node Exporter
+      lineinfile:
+        path: /opt/prometheus-2.46.0.linux-amd64/prometheus.yml
+        insertafter: '^scrape_configs:'
+        line: '  - job_name: "node"'
+        state: present
+
+    - name: Add Node Exporter target to Prometheus configuration
+      lineinfile:
+        path: /opt/prometheus-2.46.0.linux-amd64/prometheus.yml
+        insertafter: '- job_name: "node"'
+        line: '    static_configs:'
+        state: present
+
+    - name: Add target address for Node Exporter
+      lineinfile:
+        path: /opt/prometheus-2.46.0.linux-amd64/prometheus.yml
+        insertafter: 'static_configs:'
+        line: '      - targets: ["localhost:9100"]'
+        state: present
+
+    - name: Reload Prometheus configuration
+      systemd:
+        name: prometheus
+        state: restarted
+
+- hosts: grafana
+  become: yes  
+  
+  tasks:
+    - name: Mettre à jour le cache APT
+      apt:
+        update_cache: yes
+
+    - name: Télécharger la clé GPG pour le dépôt Grafana
+      shell: wget -q -O /tmp/grafana.gpg https://packages.grafana.com/gpg.key
+      args:
+        warn: false
+
+    - name: Ajouter la clé GPG pour le dépôt Grafana
+      apt_key:
+        file: /tmp/grafana.gpg
+        state: present
+
+    - name: Ajouter le dépôt Grafana
+      apt_repository:
+        repo: "deb https://packages.grafana.com/oss/deb stable main"
+        state: present
+
+    - name: Mettre à jour de nouveau le cache APT après l'ajout du dépôt
+      apt:
+        update_cache: yes
+
+    - name: Installer Grafana
+      apt:
+        name: grafana
+        state: present
+
+    - name: Démarrer le service Grafana
+      systemd:
+        name: grafana-server
+        state: started
+        enabled: yes
+
+    - name: Vérifier le statut du service Grafana
+      systemd:
+        name: grafana-server
+        state: started

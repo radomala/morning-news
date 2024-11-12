@@ -1,0 +1,15 @@
+all:
+  hosts:
+    backend:
+      ansible_host: "52.47.126.104"
+      ansible_user: ubuntu
+    frontend:
+      ansible_host: "13.36.167.76"
+      ansible_user: ubuntu
+    prometheus:
+      ansible_host: "15.236.39.109"
+      ansible_user: ubuntu
+    grafana:
+      ansible_host: "52.47.208.201"
+      ansible_user: ubuntu
+
