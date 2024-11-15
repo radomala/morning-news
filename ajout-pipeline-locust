@@ -1,0 +1,18 @@
+stages {
+    stage('Install Dependencies') {
+        steps {
+            // Installer Python et pip si nécessaire
+            script {
+                sh 'pip install locust'
+            }
+        }
+    }
+    stage('Run Locust Tests') {
+        steps {
+            script {
+	                // Exécuttion d'un test avec 100 users, 10 nouveaux/sec, pendant une minute
+                sh 'locust -f locustfile.py --headless -u 100 -r 10 --host <http://localhost:3001> --run-time 1m'
+            }
+        }
+    }
+}
