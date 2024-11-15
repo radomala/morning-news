@@ -35,8 +35,10 @@ function Home() {
         })
         .catch((error) => {
             console.error("Erreur lors de l'appel à l'API :", error);
+            alert(`Erreur lors de l'appel à l'API: ${error.message}`); // Affiche une alerte pour plus de visibilité
         });
 }, []);
+
 
 
   const filteredArticles = articlesData.filter((data) => hiddenArticles.includes(data.title) === false);
