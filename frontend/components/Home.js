@@ -11,7 +11,7 @@ function Home() {
 
   const [articlesData, setArticlesData] = useState([]);
   const [topArticle, setTopArticle] = useState({});
-
+/*
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles`)
       .then(response => response.json())
@@ -20,6 +20,24 @@ function Home() {
         setArticlesData(data.articles.filter((data, i) => i > 0));
       });
   }, []);
+*/
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/articles`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log(data.articles[4]); // Vérifie cet index
+            setArticles(data.articles.filter((_, index) => index > 0));
+        })
+        .catch((error) => {
+            console.error("Erreur lors de l'appel à l'API :", error);
+        });
+}, []);
+
 
   const filteredArticles = articlesData.filter((data) => hiddenArticles.includes(data.title) === false);
   const articles = filteredArticles.map((data, i) => {
