@@ -63,11 +63,13 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
                 
                         sh """
-                            echo 'Using SSH key file: \$SSH_KEY_FILE'
-                            ls -l \$SSH_KEY_FILE
-                            chmod 600 \$SSH_KEY_FILE
+                            ssh-keyscan -H 51.44.82.249 >> ~/.ssh/known_hosts
+                            ssh-keyscan -H 10.10.3.30 >> ~/.ssh/known_hosts
+                        """
 
-                            ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i \$SSH_KEY_FILE -W %h:%p \$SSH_USER@51.44.82.249" \$SSH_USER@10.10.3.30 'sudo docker run -d --name backend -p 3000:3000 avengersa/backend:v4'
+                        // Exécution de la commande SSH pour déployer le backend
+                        sh """
+                            ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i \$SSH_KEY_FILE -W %h:%p \$SSH_USER@51.44.82.249" \$SSH_USER@10.10.3.173 'sudo docker run -d --name backend -p 3000:3000 avengersa/backend:v5'
                         """
                     }
                 }
@@ -82,7 +84,7 @@ pipeline {
                         //sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no -J \$SSH_USER@15.188.81.11 \$SSH_USER@10.10.3.83 'sudo docker run -d --name frontend -p 3001:3000 avengersa/frontend:v4'"
                         sh """
                             
-                            ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i \$SSH_KEY_FILE -W %h:%p \$SSH_USER@51.44.82.249" \$SSH_USER@10.10.3.30 'sudo docker run -d --name frontend -p 3001:3000 avengersa/frontend:v4'
+                            ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no -o ProxyCommand="ssh -i \$SSH_KEY_FILE -W %h:%p \$SSH_USER@51.44.82.249" \$SSH_USER@10.10.3.30 'sudo docker run -d --name frontend -p 3001:3000 avengersa/frontend:v5'
                         """
                     }
                 }
