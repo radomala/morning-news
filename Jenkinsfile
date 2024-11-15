@@ -56,16 +56,29 @@ pipeline {
             }
         }
         */
+        stage('Prepare SSH known_hosts') {
+            steps {
+                script {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
+                        echo "Creating known_hosts file if it doesn't exist"
+                        sh """
+                            mkdir -p ~/.ssh
+                            touch ~/.ssh/known_hosts
+                            chmod 644 ~/.ssh/known_hosts
+                            ssh-keyscan -H 51.44.82.249 >> ~/.ssh/known_hosts
+                            ssh-keyscan -H 10.10.3.30 >> ~/.ssh/known_hosts
+                            ssh-keyscan -H 10.10.3.173 >> ~/.ssh/known_hosts
+                            ls -l ~/.ssh/known_hosts  # Afficher les permissions et le contenu du fichier
+                        """
+                    }
+                }
+            }
+        }
 
         stage('Deploy backend') {
             steps {
                 script {
                     withCredentials([sshUserPrivateKey(credentialsId: 'my-ssh-key', keyFileVariable: 'SSH_KEY_FILE', usernameVariable: 'SSH_USER')]) {
-                
-                        sh """
-                            ssh-keyscan -H 51.44.82.249 >> ~/.ssh/known_hosts
-                            ssh-keyscan -H 10.10.3.30 >> ~/.ssh/known_hosts
-                        """
 
                         // Exécution de la commande SSH pour déployer le backend
                         sh """
