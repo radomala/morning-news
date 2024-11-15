@@ -22,7 +22,16 @@ const importerArticles = require('./importArticles'); // Importer la fonction
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    origin: '*', // Autoriser toutes les origines
+    methods: 'GET,POST,PUT,DELETE,OPTIONS', // Autoriser toutes les méthodes
+    allowedHeaders: 'Content-Type,Authorization', // Autoriser les en-têtes nécessaires
+  };
+  
+  app.use(cors(corsOptions));
+  
+
+//app.use(cors());
 /*app.use(cors({
     origin: '*', // URL de votre frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Méthodes autorisées
