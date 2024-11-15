@@ -82,7 +82,7 @@ pipeline {
                         
                         //sh "ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no -J \$SSH_USER@15.188.81.11 \$SSH_USER@10.10.3.83 'sudo docker run -d --name frontend -p 3001:3000 avengersa/frontend:v4'"
                         sh """
-                            ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no -o ProxyCommand='ssh -i \$SSH_KEY_FILE -W %h:%p \$SSH_USER@51.44.82.249' \$SSH_USER@10.10.3.30 'sudo docker run -d --name frontend -p 3001:3000 avengersa/frontend:v6'
+                            ssh -i \$SSH_KEY_FILE -o StrictHostKeyChecking=no -o ProxyCommand='ssh -i \$SSH_KEY_FILE -W %h:%p \$SSH_USER@51.44.82.249' \$SSH_USER@10.10.3.30 'sudo docker run -d --name frontend -p 80:3000 avengersa/frontend:v6'
                             """
                     }
                 }
