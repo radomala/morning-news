@@ -14,6 +14,35 @@ pipeline {
             }
         }
 
+        stage('Run Jest Tests') {
+            steps {
+                script {
+                    dir('frontend') {
+                        sh 'npm run test -- --watchAll=false'
+                    }
+             }
+        }
+
+        stage('Run Cypress Tests') {
+	        agent {
+		        docker {
+			        image 'cypress/included:9.7.0'
+			        args '-v $CYPRESS_CACHE_FOLDER:/cache/Cypress'
+		        }
+		        steps {
+			        sh 'npx cypress run'
+		        }
+		        post {
+			        always {
+				        archiveArtifacts artifacts: 'cypress/screenshots/ ** , cypress/videos/ ** ', allowEmptyArchive: true
+			        }
+			        failure {
+				        echo 'Cypress tests failed'
+    			    }
+		        }	
+	        }
+        }
+
         stage('Run Locust Load Tests') {
             steps {
                 script {
