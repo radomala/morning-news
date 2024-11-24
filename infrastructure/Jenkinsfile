@@ -1,0 +1,71 @@
+pipeline {    
+    agent any 
+    
+	environment {
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+    }
+	 
+    
+	
+    stages {   
+
+        stage('----------------------------git Clone--------------------------------') {
+            steps {
+               git branch: 'develop', credentialsId: 'token-git-jenkins', url: 'https://github.com/radomala/morning-news.git'
+            }
+        }
+
+        stage('-----------------------------------init ----------------------------'){
+            steps{
+                script{
+                    dir('infrastructure'){
+                        sh 'terraform init'
+                    }
+                }
+            }
+        }
+       
+        stage('-----------------------------------Formatting Terraform Code-----------------------------'){
+            steps{
+                script{
+                    dir('infrastructure'){
+                        sh 'terraform fmt'
+                    }
+                }
+            }
+        }
+        stage('------------------------------------Validating Terraform---------------------------------'){
+            steps{
+                script{
+                    dir('infrastructure'){
+                        sh 'terraform validate'
+                    }
+                }
+            }
+        }
+
+        stage('---------------------Previewing the Infra using Terraform--------------------------------'){
+            steps{
+                script{
+                    dir('infrastructure'){
+                            sh 'terraform plan -var="ssh_key=$SSH_KEY"'  
+                }
+            }
+        }
+        }
+        
+        stage('-----------------------------------------------terraforme apply---------------------------'){
+            steps{
+                script{
+                    dir('infrastructure'){
+                        withCredentials([file(credentialsId: 'ubuntu', variable: 'SSH_KEY')]) {
+                            // Exécutez Terraform avec la clé SSH
+                            sh 'terraform apply -auto-approve -var="ssh_key=$SSH_KEY"'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
